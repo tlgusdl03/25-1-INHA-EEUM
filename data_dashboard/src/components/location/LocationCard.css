@@ -1,0 +1,42 @@
+.location_card_main_frame {
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.location_card_main_frame:hover {
+  transform: scale(1.05);
+}
+
+.location_card_img_wrapper {
+  width: 100%;
+  height: 12rem; /* 원하는 높이로 조절 가능 */
+  overflow: hidden;
+  padding: 0.625rem;
+}
+
+.location_card_img_wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 비율 유지하며 꽉 채우기 */
+  border-radius: 0.5rem;
+  display: block;
+}
+
+.location_card_info_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0rem 1rem 0rem 1rem;
+}
+
+.location_name_wrapper {
+  font-size: 1.5rem;
+}
+
+.score_wrapper {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}

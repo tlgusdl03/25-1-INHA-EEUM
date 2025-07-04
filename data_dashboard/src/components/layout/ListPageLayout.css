@@ -1,0 +1,16 @@
+.layout_main_frame{
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100%;
+}
+
+/* 각 자식 컴포넌트의 크기 지정 (비율 조정 가능) */
+.location-list {
+  min-width: 400px;
+  width: 20%;/* 왼쪽 영역 */
+}
+
+.kakao-map {
+  width: 80%; /* 오른쪽 영역 */
+}

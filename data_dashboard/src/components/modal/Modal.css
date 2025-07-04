@@ -1,0 +1,43 @@
+/* src/components/common/Modal.css */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal_content {
+  background: white;
+  padding: 1.25rem; /* 20px */
+  border-radius: 0.5rem; /* 8px */
+  width: 90%;
+  max-width: 31.25rem; /* 500px */
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal_content_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem; /* 20px */
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem; /* 24px */
+  cursor: pointer;
+  padding: 0;
+  color: #666;
+}
+
+.modal_body {
+  line-height: 1.6;
+}

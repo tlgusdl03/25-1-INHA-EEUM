@@ -1,0 +1,36 @@
+.report_main_frame {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 0.5rem;
+}
+
+.report_title_frame {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.report_content_frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.report_content_text_frame {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.report_content_text_line {
+  width: 100%;
+  overflow-wrap: break-word;
+}

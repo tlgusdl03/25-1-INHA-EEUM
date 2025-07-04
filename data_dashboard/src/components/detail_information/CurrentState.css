@@ -1,0 +1,88 @@
+.current_state_card_main_frame {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 1rem;
+}
+
+.current_state_card_location_wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 1rem;
+}
+
+.current_state_card_map_wrapper {
+  width: 100%;
+  position: relative;
+  pointer-events: none;
+}
+
+.current_state_card_location_name {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.current_state_card_image_wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 10px;
+}
+
+.current_state_card_image_wrapper img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.current_state_card_status_wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.current_state_card_status_title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.status-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.status-icon {
+  font-size: 3rem; /* 아이콘 크기 */
+}
+
+.status-icon.active {
+  color: #4caf50; /* 활성 상태일 때 초록색 */
+}
+
+.status-icon.inactive {
+  color: #717b84; /* 비활성 상태일 때 빨간색 */
+}
+
+.current_state_card_score_wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

@@ -1,0 +1,22 @@
+-- Insert iot_devices
+INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (1, 1, 'active', true, '2025-04-30 10:52:32');
+INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (2, 2, 'inactive', true, '2025-04-30 10:52:32');
+INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (3, 3, 'inactive', false, NULL);
+INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (4, 4, 'inactive', true, '2025-04-30 10:52:32');
+INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (5, 5, 'inactive', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (6, 6, 'maintenance', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (7, 7, 'maintenance', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (8, 8, 'active', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (9, 9, 'maintenance', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (10, 10, 'inactive', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (11, 11, 'active', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (12, 12, 'active', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (13, 13, 'active', false, NULL);
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (14, 14, 'inactive', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (15, 15, 'active', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (16, 16, 'maintenance', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (17, 17, 'maintenance', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (18, 18, 'active', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (19, 19, 'maintenance', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (20, 20, 'inactive', true, '2025-04-30 10:52:32');
+-- INSERT INTO iot_devices (device_id, location_id, status, is_connected, last_sent_at) VALUES (21, 21, 'inactive', true, '2025-04-30 10:52:32');

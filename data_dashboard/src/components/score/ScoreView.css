@@ -1,0 +1,56 @@
+.score_view_main_frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+.score_view_main_frame_title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.score_view_main_frame_title_wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.score_view_main_frame_titles_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+  gap: 0.5rem;
+}
+
+.score_view_icon {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.score_view_icon_smile {
+  color: #5c8cdd;
+}
+
+.score_view_icon_meh {
+  color: #65b24b;
+}
+
+.score_view_icon_frown {
+  color: #e2d058;
+}
+
+.score_view_icon_angry {
+  color: #ec7a7a;
+}
+
+.score_view_icon_question {
+  color: #717b84;
+}

@@ -1,0 +1,25 @@
+.summary_report_card_main_frame {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  gap: 0.5rem;
+}
+
+.summary_report_card_title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.summary_report_card_content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: normal;
+}

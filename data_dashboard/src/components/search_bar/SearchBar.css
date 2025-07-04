@@ -1,0 +1,90 @@
+.search_bar_main_frame {
+  width: 100%;
+  min-height: 10rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.search_bar_upper_wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  background-color: white;
+}
+
+.search_bar_bottom_wrapper {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid gray;
+}
+
+.search_bar_bottom_wrapper > span {
+  font-size: 1.25rem;
+}
+
+.search_bar_bottom_wrapper > select {
+  flex: 1;
+  text-align: center;
+}
+
+.search_bar_bottom_wrapper > select,
+.search_bar_bottom_wrapper > button {
+  height: 2rem;
+  font-size: 1rem;
+  border: 1px solid #aaa;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  padding: 0 0.5rem;
+  text-align: center;
+}
+
+.search_bar_bottom_wrapper > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.search_bar_bottom_wrapper > button:hover {
+  background-color: #f0f0f0;
+}
+
+.search_bar_bottom_wrapper
+  > select:focus
+  .search_bar_bottom_wrapper
+  > button:focus {
+  border: 1.5px solid #007bff;
+  outline: none;
+}
+
+#user_input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  padding: 0.25rem;
+}
+
+#user_submit {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+#user_submit:hover {
+  color: #000;
+}

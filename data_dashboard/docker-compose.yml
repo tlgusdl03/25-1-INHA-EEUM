@@ -1,0 +1,8 @@
+services:
+  app:
+    container_name: user_dashboard
+    image: ${ECR_REGISTRY}/user_dashboard:latest
+    ports:
+      - "80:80"
+
+    restart: unless-stopped

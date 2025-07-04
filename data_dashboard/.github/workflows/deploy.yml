@@ -1,0 +1,44 @@
+name: CI
+on:
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - Jenkinsfile
+      - docker-compose.yml
+      - README.md
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image to ECR
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          IMAGE_NAME: user_dashboard
+          VITE_KAKAO_MAP_API_KEY: ${{ secrets.VITE_KAKAO_MAP_API_KEY }}
+          VITE_API1_BASE_URL: ${{ secrets.VITE_API1_BASE_URL }}
+          VITE_API2_BASE_URL: ${{ secrets.VITE_API2_BASE_URL }}
+        run: |
+          docker build \
+          --build-arg VITE_KAKAO_MAP_API_KEY=${VITE_KAKAO_MAP_API_KEY} \
+          --build-arg VITE_API1_BASE_URL=${VITE_API1_BASE_URL} \
+          --build-arg VITE_API2_BASE_URL=${VITE_API2_BASE_URL} \
+          -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest

@@ -1,0 +1,71 @@
+pipeline {
+  agent any
+
+  environment {
+    IMAGE_NAME = "data_server"
+  }
+
+  stages {
+    stage('Clone') {
+      steps {
+        checkout([
+          $class: 'GitSCM',
+          branches: [[name: '*/main']],
+          userRemoteConfigs: [[
+            url: 'https://github.com/25-1-INHA-EEUM/data_server.git',
+            credentialsId: 'github-token'
+          ]]
+        ])
+      }
+    }
+
+    stage('Deploy to Target EC2') {
+      steps {
+        withCredentials([
+          string(credentialsId: 'target-host-ip', variable: 'TARGET_HOST_SECRET'),
+          string(credentialsId: 'ecr-registry', variable: 'ECR_REGISTRY_SECRET')
+        ]) {
+          withEnv(["TARGET_HOST=${env.TARGET_HOST_SECRET}", "ECR_REGISTRY=${env.ECR_REGISTRY_SECRET}"]) {
+            sshagent(credentials: ['data-server-ec2-key']) {
+
+              sh """
+                echo "📦 docker-compose.yml 전송 중..."
+                ssh -o StrictHostKeyChecking=no ec2-user@${env.TARGET_HOST} "
+                  sudo rm -rf ~/data_server &&
+                  mkdir -p ~/data_server &&
+                  sudo chown ec2-user:ec2-user ~/data_server
+                "
+                scp -r -o StrictHostKeyChecking=no docker-compose.yml ec2-user@${env.TARGET_HOST}:~/data_server/
+              """
+
+              sh """
+                echo "🛠️ Amazon Linux 2023용 docker, aws-cli, docker composeV2 설치..."
+                ssh -o StrictHostKeyChecking=no ec2-user@${env.TARGET_HOST} "
+                  sudo yum update -y &&
+                  sudo yum install -y docker aws-cli &&
+                  sudo systemctl enable --now docker &&
+                  sudo mkdir -p /usr/local/lib/docker/cli-plugins &&
+                  sudo curl -SL https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose &&
+                  sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+                "
+              """
+
+              sh """
+                echo "🚀 배포 시작 (ECR Pull + Clean Deploy)..."
+                ssh -o StrictHostKeyChecking=no ec2-user@${env.TARGET_HOST} "
+                  aws ecr get-login-password --region ap-northeast-2 | sudo docker login --username AWS --password-stdin ${env.ECR_REGISTRY} &&
+                  sudo docker pull ${env.ECR_REGISTRY}/${env.IMAGE_NAME}:latest &&
+                  cd ~/data_server &&
+                  echo 'ECR_REGISTRY=${env.ECR_REGISTRY}' > .env &&
+                  sudo docker compose down || true &&
+                  sudo docker image prune -af &&
+                  sudo docker compose up -d
+                "
+              """
+            }
+          }
+        }
+      }
+    }
+  }
+}

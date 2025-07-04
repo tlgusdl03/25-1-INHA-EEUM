@@ -1,0 +1,55 @@
+pipeline {
+  agent any
+
+  stages{
+    stage('Upload Infra to S3'){
+      steps{
+        withCredentials([
+          string(credentialsId: 's3-bucket', variable: 'S3_BUCKET'),
+          string(credentialsId: 's3-path-frontend', variable: 'S3_PATH'),
+        ]){
+          sh """
+          aws s3 cp docker-compose.yml s3://${S3_BUCKET}/${S3_PATH}/docker-compose.yml
+          """
+        }
+      }
+    }
+
+    stage('Deploy via SSM'){
+      steps{
+        withCredentials([
+          string(credentialsId: 's3-bucket', variable: 'S3_BUCKET'),
+          string(credentialsId: 's3-path-frontend', variable: 'S3_PATH'),
+          string(credentialsId: 'region', variable: 'REGION'),
+          string(credentialsId: 'presentation-server-instance-id', variable: 'TARGET_INSTANCE_ID'),
+          string(credentialsId: 'ecr-registry', variable: 'ECR_REGISTRY_SECRET'),
+        ]){
+          sh """
+          aws ssm send-command \\
+            --instance-ids ${TARGET_INSTANCE_ID} \\
+            --document-name "AWS-RunShellScript" \\
+            --parameters 'commands=[
+              "sudo yum update -y",
+              "sudo yum install -y docker aws-cli",
+              "sudo systemctl enable --now docker",
+              "sudo mkdir -p /usr/local/lib/docker/cli-plugins",
+              "sudo curl -SL https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose",
+              "sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose",
+              "docker compose version",
+              "mkdir -p ~/frontend",
+              "aws s3 cp s3://${S3_BUCKET}/${S3_PATH}/docker-compose.yml ~/frontend/docker-compose.yml",
+              "cd ~/frontend",
+              "echo ECR_REGISTRY=${env.ECR_REGISTRY_SECRET} >> .env",
+              "aws ecr get-login-password --region ${env.REGION} | docker login --username AWS --password-stdin ${env.ECR_REGISTRY_SECRET}",
+              "docker compose down -v || true",
+              "docker system prune -af",
+              "docker compose up -d"
+            ]' \\
+            --region ${env.REGION}
+          """
+        }
+      }
+    }
+  }
+
+}

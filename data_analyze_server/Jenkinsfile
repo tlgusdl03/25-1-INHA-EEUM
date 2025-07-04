@@ -1,0 +1,144 @@
+// pipeline {
+//   agent any
+
+//   environment {
+//     TARGET_DIR = "indoor-insight"
+//   }
+
+//   stages {
+//     stage('Clone Infra Deploy Repo') {
+//       steps {
+//         checkout([
+//           $class: 'GitSCM',
+//           branches: [[name: '*/main']],
+//           userRemoteConfigs: [[
+//             url: 'https://github.com/25-1-INHA-EEUM/indoor_insight_server.git',
+//             credentialsId: 'github-token'
+//           ]]
+//         ])
+//       }
+//     }
+
+//     stage('Deploy Server') {
+//       steps {
+//         withCredentials([
+//           string(credentialsId: 'presentation-server-host-ip', variable: 'TARGET_HOST_SECRET'),
+//           string(credentialsId: 'ecr-registry', variable: 'ECR_REGISTRY_SECRET'),
+//           string(credentialsId: 'DATABASE_URL', variable: 'DATABASE_URL'),
+//           string(credentialsId: 'KMA_SERVICE_KEY', variable: 'KMA_SERVICE_KEY')
+//         ]) {
+//           withEnv(["TARGET_HOST=${env.TARGET_HOST_SECRET}", "ECR_REGISTRY=${env.ECR_REGISTRY_SECRET}"]) {
+//             sshagent(credentials: ['presentation-server-ec2-key']) {
+
+//               sh """
+//                 echo "📦 Indoor Insight Server repo 전송 중..."
+//                 ssh -o StrictHostKeyChecking=no ec2-user@${env.TARGET_HOST} "
+//                   sudo rm -rf ~/indoor-insight &&
+//                   mkdir -p ~/indoor-insight &&
+//                   sudo chown ec2-user:ec2-user ~/indoor-insight
+//                 "
+//                 scp -r -o StrictHostKeyChecking=no docker-compose.yml ec2-user@${env.TARGET_HOST}:~/indoor-insight/
+//               """
+
+//               sh """
+//                 echo "🛠️ Amazon Linux 2023용 docker, aws-cli, docker composeV2 설치..."
+//                 ssh -o StrictHostKeyChecking=no ec2-user@${env.TARGET_HOST} "
+//                   sudo yum update -y &&
+//                   sudo yum install -y docker aws-cli &&
+//                   sudo systemctl enable --now docker &&
+//                   sudo mkdir -p /usr/local/lib/docker/cli-plugins &&
+//                   sudo curl -SL https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose &&
+//                   sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+//                 "
+//               """
+
+//               sh """
+//                 echo "🚀 전체 서비스 배포 시작..."
+//                 ssh -o StrictHostKeyChecking=no ec2-user@${env.TARGET_HOST} "
+//                     cd ~/indoor-insight &&
+//                     echo 'ECR_REGISTRY=${env.ECR_REGISTRY_SECRET}' >> .env &&
+//                     echo 'DATABASE_URL=${env.DATABASE_URL}' >> .env &&
+//                     echo 'KMA_SERVICE_KEY=${env.KMA_SERVICE_KEY}' >> .env &&
+//                     aws ecr get-login-password --region ap-northeast-2 | sudo docker login --username AWS --password-stdin ${env.ECR_REGISTRY} &&
+//                     sudo docker compose down -v || true &&
+//                     sudo docker system prune -af &&
+//                     sudo docker compose up -d
+//                 "
+//               """
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
+
+
+pipeline {
+  agent any
+
+  environment {
+    TARGET_DIR = "indoor-insight-server-deploy"
+  }
+
+  stages {
+    stage('Upload Infra to S3') {
+      steps {
+        withCredentials([
+          string(credentialsId: 's3-bucket', variable: 'S3_BUCKET'),
+          string(credentialsId: 's3-path-indoor-insight-server', variable: 'S3_PATH')
+        ]) {
+          sh """
+            echo "📤 Upload docker-compose.yml to S3..."
+            aws s3 cp ./docker-compose.yml s3://${S3_BUCKET}/${S3_PATH}/docker-compose.yml
+          """
+        }
+      }
+    }
+
+    stage('Deploy via SSM') {
+      steps {
+        withCredentials([
+          string(credentialsId: 's3-bucket', variable: 'S3_BUCKET'),
+          string(credentialsId: 's3-path-indoor-insight-server', variable: 'S3_PATH'),
+          string(credentialsId: 'region', variable: 'REGION'),
+          string(credentialsId: 'presentation-server-instance-id', variable: 'TARGET_INSTANCE_ID'),
+          string(credentialsId: 'ecr-registry', variable: 'ECR_REGISTRY'),
+          string(credentialsId: 'KMA_SERVICE_KEY', variable: 'KMA_SERVICE_KEY'),
+          string(credentialsId: 'DATABASE_URL', variable: 'DATABASE_URL'),
+          string(credentialsId: 'REDIS_URL', variable: 'REDIS_URL')
+        ]) {
+          sh """
+            echo "🚀 Deploy Indoor Insight Server via SSM..."
+
+            aws ssm send-command \\
+              --instance-ids ${TARGET_INSTANCE_ID} \\
+              --document-name "AWS-RunShellScript" \\
+              --comment "Deploy Indoor Insight Server" \\
+              --parameters commands='[
+                "sudo yum update -y",
+                "sudo yum install -y docker aws-cli",
+                "sudo systemctl enable --now docker",
+                "sudo mkdir -p /usr/local/lib/docker/cli-plugins",
+                "sudo curl -SL https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose",
+                "sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose",
+                "docker compose version",
+                "mkdir -p ~/${TARGET_DIR}",
+                "aws s3 cp s3://${S3_BUCKET}/${S3_PATH}/docker-compose.yml ~/${TARGET_DIR}/docker-compose.yml",
+                "cd ~/${TARGET_DIR}",
+                "echo DATABASE_URL=${DATABASE_URL} >> .env",
+                "echo ECR_REGISTRY=${ECR_REGISTRY} >> .env",
+                "echo KMA_SERVICE_KEY=${KMA_SERVICE_KEY} >> .env",
+                "echo REDIS_URL=${REDIS_URL} >> .env",
+                "aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}",
+                "docker compose down -v || true",
+                "docker system prune -af",
+                "docker compose up -d"
+              ]' \\
+              --region ${REGION}
+          """
+        }
+      }
+    }
+  }
+}

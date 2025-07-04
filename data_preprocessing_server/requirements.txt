@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+pydantic
+SQLAlchemy
+asyncpg
+psycopg2-binary        # 개발용
+python-dotenv
+paho-mqtt
+pytest
+httpx   # fastapi[test]에 포함됨
