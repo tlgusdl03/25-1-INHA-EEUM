@@ -24,3 +24,6 @@
 # 시스템 아키텍처
 ![아키텍처](https://github.com/user-attachments/assets/48a03d91-d6ca-4309-82e2-e98bbf07e957)
 - AWS EC2 t3.medium 인스턴스에서 Docker Compose 기반으로 서버를 운영 중입니다.
+
+# 시연 영상
+[![인하이음 데모영상](https://img.youtube.com/vi/7N53MisEojM/0.jpg)](https://youtu.be/7N53MisEojM)
